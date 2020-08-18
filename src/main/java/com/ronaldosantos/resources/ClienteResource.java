@@ -19,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ronaldosantos.domain.Cliente;
 import com.ronaldosantos.dto.ClienteDTO;
+import com.ronaldosantos.dto.ClienteNewDTO;
 import com.ronaldosantos.services.ClienteService;
 
 @RestController
@@ -57,14 +58,17 @@ public class ClienteResource {
 	
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@RequestBody Cliente obj){
-	   
-	   Cliente objCliente = service.insert(obj);
-	   
-	   URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/{id}").buildAndExpand(objCliente.getId()).toUri();  
-	   return ResponseEntity.created(uri).build();	   
-   }
+	public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO objDto){
+		
+		Cliente obj = service.fromDTO(objDto);
+		
+		obj = service.insert(obj);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/{id}").buildAndExpand(obj.getId()).toUri();
+		
+		return ResponseEntity.created(uri).build();
+		
+	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
